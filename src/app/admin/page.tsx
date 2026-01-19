@@ -44,7 +44,7 @@ export default async function AdminDashboard() {
                                 <TableCell className="font-medium max-w-[200px] truncate" title={listing.title}>
                                     {listing.title}
                                 </TableCell>
-                                <TableCell>{listing.user.name} <br /> <span className="text-xs text-muted-foreground">{listing.user.email}</span></TableCell>
+                                <TableCell>{listing.user?.name || "User"} <br /> <span className="text-xs text-muted-foreground">{listing.user?.email || "No email"}</span></TableCell>
                                 <TableCell>
                                     <Badge variant={listing.status === 'ACTIVE' ? 'default' : 'secondary'}>
                                         {listing.status}

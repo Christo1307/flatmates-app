@@ -25,7 +25,7 @@ export default async function MessagesPage() {
             ) : (
                 <div className="grid gap-4 max-w-2xl mx-auto">
                     {conversations.map((conv) => (
-                        <Link href={`/messages/${conv.user.id}`} key={conv.user.id}>
+                        <Link href={`/messages/${conv.user?.id}`} key={conv.user?.id}>
                             <Card className="hover:bg-accent transition-colors cursor-pointer">
                                 <CardContent className="p-4 flex items-center gap-4">
                                     <Avatar>
