@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react"
 import { Navbar } from "@/components/layout/navbar"
 import { auth } from "@/auth"
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,10 @@ export default async function RootLayout({
   const session = await auth()
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        suppressHydrationWarning
       >
         <SessionProvider session={session}>
           <Navbar />
@@ -42,6 +44,7 @@ export default async function RootLayout({
             {children}
           </main>
         </SessionProvider>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
       </body>
     </html>
   );

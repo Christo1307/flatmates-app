@@ -46,7 +46,7 @@ export function ListingForm({ listing }: ListingFormProps) {
         if (listing?.images) {
             defaultImages = (JSON.parse(listing.images) as string[]).join(", ")
         }
-    } catch (e) { }
+    } catch { }
 
     const form = useForm({
         resolver: zodResolver(ListingFormSchema),

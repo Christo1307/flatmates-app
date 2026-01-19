@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { getAllListingsForAdmin, updateListingStatus, deleteListingAdmin } from "@/actions/admin"
+import { getAllListingsForAdmin } from "@/actions/admin"
 import { redirect } from "next/navigation"
 import {
     Table,
@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+
 import { Badge } from "@/components/ui/badge"
 import { AdminActions } from "@/components/admin/admin-actions"
 

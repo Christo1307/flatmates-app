@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -34,6 +35,22 @@ model User {
   listings      Listing[]
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  payments         Payment[]
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  amount        Int      // Amount in smallest unit (e.g., paise)
+  currency      String   @default("INR")
+  status        String   // PENDING, COMPLETED, FAILED
+  provider      String   // RAZORPAY, STRIPE, MOCK
+  transactionId String?  // ID from external provider
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Account {
@@ -73,6 +90,7 @@ model Listing {
   amenities   String?  // JSON string or comma-separated
   images      String?  // JSON string of URLs
   status      String   @default("ACTIVE") // ACTIVE, FILLED, PAUSED
+  isFeatured  Boolean  @default(false)
   availableFrom DateTime?
   
   userId      String

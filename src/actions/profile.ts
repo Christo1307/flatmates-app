@@ -18,7 +18,9 @@ const ProfileSchema = z.object({
     hideGender: z.boolean().optional(),
 })
 
-export async function updateProfile(formData: z.infer<typeof ProfileSchema>) {
+import { Prisma } from "@prisma/client"
+
+export async function updateProfile(formData: z.input<typeof ProfileSchema>) {
     const session = await auth()
 
     if (!session?.user?.id) {
@@ -34,7 +36,7 @@ export async function updateProfile(formData: z.infer<typeof ProfileSchema>) {
     try {
         const data = validatedFields.data
         // Filter out undefined
-        const updateData: any = {}
+        const updateData: Prisma.UserUpdateInput = {}
         if (data.name !== undefined) updateData.name = data.name
         if (data.bio !== undefined) updateData.bio = data.bio
         if (data.age !== undefined) updateData.age = data.age
@@ -52,11 +54,11 @@ export async function updateProfile(formData: z.infer<typeof ProfileSchema>) {
                 select: { settings: true }
             })
 
-            let currentSettings: any = {}
+            let currentSettings: Record<string, unknown> = {}
             if (currentUser?.settings) {
                 try {
                     currentSettings = JSON.parse(currentUser.settings)
-                } catch (e) { }
+                } catch { }
             }
 
             currentSettings.hideGender = data.hideGender
@@ -70,7 +72,7 @@ export async function updateProfile(formData: z.infer<typeof ProfileSchema>) {
 
         revalidatePath("/profile")
         return { success: "Profile updated" }
-    } catch (error) {
+    } catch {
         return { error: "Something went wrong" }
     }
 }

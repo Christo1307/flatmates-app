@@ -51,7 +51,7 @@ export function LoginForm() {
             try {
                 const result = await login(formData)
                 if (result) setError(result)
-            } catch (e) {
+            } catch {
                 setError("Something went wrong")
             }
         })
@@ -103,7 +103,7 @@ export function LoginForm() {
             </CardContent>
             <CardFooter>
                 <div className="text-sm text-muted-foreground text-center w-full">
-                    Don't have an account? <Link href="/signup" className="underline text-primary">Sign up</Link>
+                    Don&apos;t have an account? <Link href="/signup" className="underline text-primary">Sign up</Link>
                 </div>
             </CardFooter>
         </Card>

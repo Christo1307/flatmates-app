@@ -4,7 +4,6 @@ import { auth } from "@/auth"
 import db from "@/lib/db"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 
 const ListingSchema = z.object({
     title: z.string().min(5, "Title needed (min 5 chars)"),
@@ -26,6 +25,27 @@ export async function createListing(formData: z.input<typeof ListingSchema>) {
 
     const { title, description, rent, deposit, location, amenities, availableFrom, imageUrls } = validated.data
 
+    // Premium Check and Listing Limit
+    const user = await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true }
+    })
+
+    const isPremium = user?.role === "LISTER_PREMIUM"
+
+    if (!isPremium) {
+        const activeListingsCount = await db.listing.count({
+            where: {
+                userId: session.user.id,
+                status: "ACTIVE"
+            }
+        })
+
+        if (activeListingsCount >= 1) {
+            return { error: "Basic accounts are limited to 1 active listing. Upgrade to Premium for unlimited listings!" }
+        }
+    }
+
     // Process images -> JSON array
     let imagesJson = "[]"
     if (imageUrls) {
@@ -44,10 +64,11 @@ export async function createListing(formData: z.input<typeof ListingSchema>) {
                 amenities,
                 availableFrom,
                 images: imagesJson,
-                userId: session.user.id
+                userId: session.user.id,
+                isFeatured: isPremium // Auto-feature listings from premium users
             }
         })
-    } catch (e) {
+    } catch {
         return { error: "Failed to create listing" }
     }
 
@@ -55,12 +76,14 @@ export async function createListing(formData: z.input<typeof ListingSchema>) {
     return { success: "Listing Created" }
 }
 
+import { Prisma } from "@prisma/client"
+
 export async function getListings(filters?: {
     location?: string
     minRent?: number
     maxRent?: number
 }) {
-    const where: any = { status: "ACTIVE" }
+    const where: Prisma.ListingWhereInput = { status: "ACTIVE" }
 
     if (filters?.location) {
         where.location = { contains: filters.location }
@@ -77,15 +100,26 @@ export async function getListings(filters?: {
 
     return await db.listing.findMany({
         where,
-        orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true, image: true } } }
+        orderBy: [
+            { isFeatured: "desc" },
+            { createdAt: "desc" }
+        ],
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    image: true,
+                    role: true
+                }
+            }
+        }
     })
 }
 
 export async function getListing(id: string) {
     return await db.listing.findUnique({
         where: { id },
-        include: { user: { select: { name: true, image: true, email: true } } }
+        include: { user: { select: { name: true, image: true, email: true, role: true } } }
     })
 }
 

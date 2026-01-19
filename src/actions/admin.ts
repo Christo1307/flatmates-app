@@ -3,7 +3,7 @@
 import { auth } from "@/auth"
 import db from "@/lib/db"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+
 
 async function checkAdmin() {
     const session = await auth()
@@ -35,7 +35,7 @@ export async function updateListingStatus(listingId: string, status: string) {
         revalidatePath("/admin")
         revalidatePath("/listings")
         return { success: "Status updated" }
-    } catch (e) {
+    } catch {
         return { error: "Failed to update status" }
     }
 }
@@ -51,7 +51,7 @@ export async function deleteListingAdmin(listingId: string) {
         revalidatePath("/admin")
         revalidatePath("/listings")
         return { success: "Deleted" }
-    } catch (e) {
+    } catch {
         return { error: "Failed to delete" }
     }
 }

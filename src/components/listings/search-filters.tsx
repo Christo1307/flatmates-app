@@ -2,7 +2,7 @@
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+
 import { Search } from "lucide-react"
 import { useDebouncedCallback } from "use-debounce"
 

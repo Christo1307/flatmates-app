@@ -3,10 +3,18 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Listing } from "@prisma/client"
-import { MapPin, User, Calendar } from "lucide-react"
+import { MapPin, User, Calendar, Star, ShieldCheck } from "lucide-react"
+import Image from "next/image"
 
 interface ListingCardProps {
-    listing: Listing & { user: { name: string | null, image: string | null } }
+    listing: Listing & {
+        user: {
+            name: string | null,
+            image: string | null,
+            role: string
+        },
+        isFeatured: boolean
+    }
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
@@ -17,13 +25,23 @@ export function ListingCard({ listing }: ListingCardProps) {
         <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
             <div className="relative h-48 w-full bg-muted rounded-t-lg overflow-hidden">
                 {firstImage ? (
-                    <img src={firstImage} alt={listing.title} className="w-full h-full object-cover" />
+                    <Image
+                        src={firstImage}
+                        alt={listing.title}
+                        fill
+                        className="object-cover"
+                    />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-secondary">
                         No Image
                     </div>
                 )}
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 right-2 flex gap-1">
+                    {listing.isFeatured && (
+                        <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white gap-1">
+                            <Star className="w-3 h-3 fill-white" /> Featured
+                        </Badge>
+                    )}
                     <Badge variant="secondary" className="font-semibold">₹{listing.rent}/mo</Badge>
                 </div>
             </div>
@@ -41,7 +59,12 @@ export function ListingCard({ listing }: ListingCardProps) {
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                         <User className="w-3 h-3" />
-                        <span>{listing.user.name || "User"}</span>
+                        <span className="flex items-center gap-1">
+                            {listing.user.name || "User"}
+                            {listing.user.role === "LISTER_PREMIUM" && (
+                                <ShieldCheck className="w-3 h-3 text-blue-500 fill-blue-50" />
+                            )}
+                        </span>
                     </div>
                     {listing.availableFrom && (
                         <div className="flex items-center gap-1">

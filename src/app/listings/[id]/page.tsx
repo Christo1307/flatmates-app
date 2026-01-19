@@ -2,7 +2,8 @@ import { getListing } from "@/actions/listing"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Calendar, Check, ArrowLeft } from "lucide-react"
+import { MapPin, Calendar, Check, ArrowLeft, ShieldCheck, Star } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 export const dynamic = 'force-dynamic'
@@ -46,11 +47,25 @@ export default async function ListingPage({ params }: { params: { id: string } }
                     {/* Images */}
                     {images.length > 0 ? (
                         <div className="grid grid-cols-1 gap-2 rounded-xl overflow-hidden shadow-sm">
-                            <img src={images[0]} alt={listing.title} className="w-full h-80 object-cover" />
+                            <div className="relative w-full h-80">
+                                <Image
+                                    src={images[0]}
+                                    alt={listing.title}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                             {images.length > 1 && (
                                 <div className="grid grid-cols-3 gap-2">
                                     {images.slice(1).map((img: string, i: number) => (
-                                        <img key={i} src={img} alt="" className="h-24 w-full object-cover rounded-md" />
+                                        <div key={i} className="relative h-24 w-full">
+                                            <Image
+                                                src={img}
+                                                alt={`Gallery ${i}`}
+                                                fill
+                                                className="object-cover rounded-md"
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -61,11 +76,20 @@ export default async function ListingPage({ params }: { params: { id: string } }
                         </div>
                     )}
 
-                    <div>
-                        <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
-                        <div className="flex items-center text-muted-foreground gap-2">
-                            <MapPin className="w-5 h-5" />
-                            <span className="text-lg">{listing.location}</span>
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
+                                {listing.isFeatured && (
+                                    <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white gap-1">
+                                        <Star className="w-3 h-3 fill-white" /> Featured
+                                    </Badge>
+                                )}
+                            </div>
+                            <div className="flex items-center text-muted-foreground gap-2">
+                                <MapPin className="w-5 h-5" />
+                                <span className="text-lg">{listing.location}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -110,16 +134,30 @@ export default async function ListingPage({ params }: { params: { id: string } }
                             <div className="pt-4 border-t">
                                 <p className="text-sm font-medium mb-2">Listed by</p>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
+                                    <div className="h-10 w-10 relative rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
                                         {listing.user.image ? (
-                                            <img src={listing.user.image} alt={listing.user.name || "User"} />
+                                            <Image
+                                                src={listing.user.image}
+                                                alt={listing.user.name || "User"}
+                                                fill
+                                                className="object-cover"
+                                            />
                                         ) : (
                                             (listing.user.name || "U").charAt(0)
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-medium">{listing.user.name || "Flatmate"}</p>
-                                        <p className="text-xs text-muted-foreground">Verified User</p>
+                                        <div className="flex items-center gap-1">
+                                            <p className="font-medium">{listing.user.name || "Flatmate"}</p>
+                                            {listing.user.role === "LISTER_PREMIUM" && (
+                                                <ShieldCheck className="w-4 h-4 text-blue-500 fill-blue-50" />
+                                            )}
+                                        </div>
+                                        {listing.user.role === "LISTER_PREMIUM" ? (
+                                            <p className="text-xs text-blue-600 font-medium">Verified Provider</p>
+                                        ) : (
+                                            <p className="text-xs text-muted-foreground">Standard User</p>
+                                        )}
                                     </div>
                                 </div>
                                 <Button asChild className="w-full" size="lg">

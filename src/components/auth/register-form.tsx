@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState, useTransition } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+
 
 const RegisterSchema = z.object({
     name: z.string().min(2, "Name is required"),
@@ -29,7 +29,6 @@ export function RegisterForm() {
     const [error, setError] = useState<string | undefined>("")
     const [success, setSuccess] = useState<string | undefined>("")
     const [isPending, startTransition] = useTransition()
-    const router = useRouter()
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),

@@ -12,7 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { User, LogOut, Settings, LayoutDashboard, Crown, MessageSquare } from "lucide-react"
+import { User, LogOut, LayoutDashboard, Crown, MessageSquare } from "lucide-react"
 
 export function Navbar() {
     const { data: session } = useSession()
@@ -101,7 +101,7 @@ export function Navbar() {
                                 <Link href="/login">Login</Link>
                             </Button>
                             <Button asChild>
-                                <Link href="/register">Sign Up</Link>
+                                <Link href="/signup">Sign Up</Link>
                             </Button>
                         </div>
                     )}

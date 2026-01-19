@@ -29,7 +29,7 @@ export async function sendMessage(formData: z.input<typeof MessageSchema>) {
                 receiverId
             }
         })
-    } catch (e) {
+    } catch {
         return { error: "Failed to send message" }
     }
 

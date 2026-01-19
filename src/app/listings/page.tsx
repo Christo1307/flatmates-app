@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { SearchFilters } from "@/components/listings/search-filters"
 
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Browse Listings",
+    description: "Search for available rooms, flatmates, and shared apartments in your area."
+}
+
 export const dynamic = 'force-dynamic'
 
 export default async function ListingsPage({ searchParams }: {

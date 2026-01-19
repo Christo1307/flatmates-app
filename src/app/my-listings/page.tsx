@@ -17,7 +17,7 @@ export default async function MyListingsPage() {
     const listings = await db.listing.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true, image: true } } }
+        include: { user: { select: { name: true, image: true, role: true } } }
     })
 
     return (
@@ -31,7 +31,7 @@ export default async function MyListingsPage() {
 
             {listings.length === 0 ? (
                 <div className="text-center py-20 bg-muted/30 rounded-lg">
-                    <p className="text-xl text-muted-foreground mb-4">You haven't posted any listings yet.</p>
+                    <p className="text-xl text-muted-foreground mb-4">You haven&apos;t posted any listings yet.</p>
                     <Button asChild>
                         <Link href="/listings/create">Get Started</Link>
                     </Button>

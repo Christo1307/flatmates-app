@@ -17,8 +17,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { useState, useTransition } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ShieldCheck } from "lucide-react"
+import { useTransition } from "react"
 import { User } from "@prisma/client"
 import { useRouter } from "next/navigation"
 
@@ -34,7 +36,7 @@ const ProfileSchema = z.object({
     hideGender: z.boolean().optional(),
 })
 
-type ProfileValues = z.infer<typeof ProfileSchema>
+
 
 interface ProfileFormProps {
     user: User
@@ -45,10 +47,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
     const router = useRouter()
 
     // Parse settings if available
-    let settings: any = {}
+    let settings: Record<string, unknown> = {}
     try {
         settings = user.settings ? JSON.parse(user.settings) : {}
-    } catch (e) { }
+    } catch { }
 
     const form = useForm({
         resolver: zodResolver(ProfileSchema),
@@ -61,7 +63,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
             budgetMax: user.budgetMax || undefined,
             lifestyle: user.lifestyle || "",
             moveInDate: user.moveInDate ? new Date(user.moveInDate).toISOString().split('T')[0] : "",
-            hideGender: settings.hideGender || false,
+            hideGender: (settings.hideGender as boolean) || false,
         },
     })
 
@@ -77,7 +79,16 @@ export function ProfileForm({ user }: ProfileFormProps) {
     return (
         <Card className="w-full max-w-2xl">
             <CardHeader>
-                <CardTitle>Edit Profile</CardTitle>
+                <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                        Edit Profile
+                        {user.role === "LISTER_PREMIUM" && (
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-200 gap-1">
+                                <ShieldCheck className="w-3 h-3" /> Premium
+                            </Badge>
+                        )}
+                    </CardTitle>
+                </div>
                 <CardDescription>Update your personal information and preferences.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -105,7 +116,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                     <FormItem>
                                         <FormLabel>Age</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} value={field.value ?? ''} disabled={isPending} />
+                                            <Input type="number" {...field} value={(field.value as number | undefined) ?? ''} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -148,7 +159,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                     <FormItem>
                                         <FormLabel>Min Budget (₹)</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} value={field.value ?? ''} disabled={isPending} />
+                                            <Input type="number" {...field} value={(field.value as number | undefined) ?? ''} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -161,7 +172,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                     <FormItem>
                                         <FormLabel>Max Budget (₹)</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} value={field.value ?? ''} disabled={isPending} />
+                                            <Input type="number" {...field} value={(field.value as number | undefined) ?? ''} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

@@ -1,11 +1,25 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { upgradeToPremium } from "@/actions/payments"
+import { createPaymentOrder, verifyPayment } from "@/actions/payments"
 import { Check, Star } from "lucide-react"
 import { useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Script from "next/script"
+
+interface RazorpayResponse {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+}
+
+declare global {
+    interface Window {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        Razorpay: new (options: any) => any;
+    }
+}
 
 export default function PremiumPage() {
     const [isPending, startTransition] = useTransition()
@@ -16,16 +30,69 @@ export default function PremiumPage() {
 
     const handleUpgrade = () => {
         startTransition(async () => {
-            const res = await upgradeToPremium()
-            if (res.success) {
-                await update() // Update session
-                router.refresh()
+            try {
+                // 1. Create Order
+                const order = await createPaymentOrder()
+
+                if (order.error) {
+                    alert(order.error)
+                    return
+                }
+
+                if (!order.orderId) {
+                    alert("Failed to create order")
+                    return
+                }
+
+                // 2. Initialize Razorpay
+                const options = {
+                    key: order.keyId,
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "Flatmates Premium",
+                    description: "Upgrade to Pro Lister",
+                    order_id: order.orderId,
+                    handler: async function (response: RazorpayResponse) {
+                        // 3. Verify Payment
+                        const verification = await verifyPayment(
+                            response.razorpay_order_id,
+                            response.razorpay_payment_id,
+                            response.razorpay_signature
+                        )
+
+                        if (verification.success) {
+                            await update() // Update session
+                            router.refresh()
+                            alert("Payment Successful! You are now a Premium member.")
+                        } else {
+                            alert("Payment verification failed.")
+                        }
+                    },
+                    prefill: {
+                        name: session?.user?.name || "",
+                        email: session?.user?.email || "",
+                    },
+                    theme: {
+                        color: "#0F172A", // Slate-900 or use your primary color
+                    },
+                };
+
+                const rzp1 = new window.Razorpay(options);
+                rzp1.on('payment.failed', function (response: { error: { description: string } }) {
+                    alert(response.error.description);
+                });
+                rzp1.open();
+
+            } catch (error) {
+                console.error("Payment Error:", error)
+                alert("Something went wrong during payment.")
             }
         })
     }
 
     return (
         <div className="container mx-auto py-12 px-4">
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             <div className="text-center max-w-2xl mx-auto mb-12">
                 <h1 className="text-4xl font-bold mb-4">Upgrade to Premium</h1>
                 <p className="text-muted-foreground text-lg">
@@ -94,13 +161,19 @@ export default function PremiumPage() {
                             onClick={handleUpgrade}
                             disabled={isPending}
                         >
-                            {isPending ? "Upgrading..." : "Subscribe Now"}
+                            {isPending ? "Starting Payment..." : "Subscribe Now"}
                         </Button>
                     )}
                     <p className="text-xs text-center text-muted-foreground mt-3">
-                        Mock payment flow for MVP. No actual charge.
+                        Secure payment via Razorpay.
                     </p>
                 </div>
+            </div>
+
+            <div className="mt-12 text-center">
+                <Button variant="link" asChild>
+                    <a href="/settings/billing">View Billing History</a>
+                </Button>
             </div>
         </div>
     )
