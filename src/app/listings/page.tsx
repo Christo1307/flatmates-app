@@ -14,12 +14,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function ListingsPage({ searchParams }: {
-    searchParams: { location?: string; minRent?: string; maxRent?: string }
+    searchParams: Promise<{ location?: string; minRent?: string; maxRent?: string }>
 }) {
+    const sp = await searchParams
     const filters = {
-        location: searchParams.location,
-        minRent: searchParams.minRent ? Number(searchParams.minRent) : undefined,
-        maxRent: searchParams.maxRent ? Number(searchParams.maxRent) : undefined,
+        location: sp.location,
+        minRent: sp.minRent ? Number(sp.minRent) : undefined,
+        maxRent: sp.maxRent ? Number(sp.maxRent) : undefined,
     }
 
     const listings = await getListings(filters)
