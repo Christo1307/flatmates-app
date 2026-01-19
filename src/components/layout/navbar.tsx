@@ -53,17 +53,17 @@ export function Navbar() {
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                                         <Avatar className="h-8 w-8">
-                                            <AvatarImage src={session.user.image || undefined} alt={session.user.name || ""} />
-                                            <AvatarFallback>{session.user.name?.[0] || "U"}</AvatarFallback>
+                                            <AvatarImage src={session?.user?.image || undefined} alt={session?.user?.name || ""} />
+                                            <AvatarFallback>{session?.user?.name?.[0] || "U"}</AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56" align="end" forceMount>
                                     <DropdownMenuLabel className="font-normal">
                                         <div className="flex flex-col space-y-1">
-                                            <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                                            <p className="text-sm font-medium leading-none">{session?.user?.name}</p>
                                             <p className="text-xs leading-none text-muted-foreground">
-                                                {session.user.email}
+                                                {session?.user?.email}
                                             </p>
                                             {session?.user?.role === "LISTER_PREMIUM" && (
                                                 <p className="text-xs font-semibold text-yellow-600 mt-1 flex items-center gap-1">

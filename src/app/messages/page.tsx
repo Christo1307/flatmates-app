@@ -29,12 +29,12 @@ export default async function MessagesPage() {
                             <Card className="hover:bg-accent transition-colors cursor-pointer">
                                 <CardContent className="p-4 flex items-center gap-4">
                                     <Avatar>
-                                        <AvatarImage src={conv.user.image} />
-                                        <AvatarFallback>{conv.user.name?.[0] || "U"}</AvatarFallback>
+                                        <AvatarImage src={conv.user?.image || undefined} />
+                                        <AvatarFallback>{conv.user?.name?.[0] || "U"}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-grow overflow-hidden">
                                         <div className="flex justify-between items-baseline mb-1">
-                                            <h3 className="font-semibold truncate">{conv.user.name || "User"}</h3>
+                                            <h3 className="font-semibold truncate">{conv.user?.name || "User"}</h3>
                                             <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
                                                 {new Date(conv.timestamp).toLocaleDateString()}
                                             </span>

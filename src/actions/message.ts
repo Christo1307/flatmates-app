@@ -62,6 +62,10 @@ export async function getConversations() {
 
     for (const msg of messages) {
         const otherUser = msg.senderId === session.user.id ? msg.receiver : msg.sender
+
+        // Skip if user was deleted or is somehow null
+        if (!otherUser) continue
+
         if (!conversations.has(otherUser.id)) {
             conversations.set(otherUser.id, {
                 user: otherUser,

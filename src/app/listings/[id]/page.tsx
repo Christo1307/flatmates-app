@@ -135,7 +135,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
                                 <p className="text-sm font-medium mb-2">Listed by</p>
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="h-10 w-10 relative rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
-                                        {listing.user.image ? (
+                                        {listing.user?.image ? (
                                             <Image
                                                 src={listing.user.image}
                                                 alt={listing.user.name || "User"}
@@ -143,17 +143,17 @@ export default async function ListingPage({ params }: { params: { id: string } }
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            (listing.user.name || "U").charAt(0)
+                                            (listing.user?.name || "U").charAt(0)
                                         )}
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-1">
-                                            <p className="font-medium">{listing.user.name || "Flatmate"}</p>
-                                            {listing.user.role === "LISTER_PREMIUM" && (
+                                            <p className="font-medium">{listing.user?.name || "Flatmate"}</p>
+                                            {listing.user?.role === "LISTER_PREMIUM" && (
                                                 <ShieldCheck className="w-4 h-4 text-blue-500 fill-blue-50" />
                                             )}
                                         </div>
-                                        {listing.user.role === "LISTER_PREMIUM" ? (
+                                        {listing.user?.role === "LISTER_PREMIUM" ? (
                                             <p className="text-xs text-blue-600 font-medium">Verified Provider</p>
                                         ) : (
                                             <p className="text-xs text-muted-foreground">Standard User</p>

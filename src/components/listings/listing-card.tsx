@@ -60,8 +60,8 @@ export function ListingCard({ listing }: ListingCardProps) {
                     <div className="flex items-center gap-1">
                         <User className="w-3 h-3" />
                         <span className="flex items-center gap-1">
-                            {listing.user.name || "User"}
-                            {listing.user.role === "LISTER_PREMIUM" && (
+                            {listing.user?.name || "User"}
+                            {listing.user?.role === "LISTER_PREMIUM" && (
                                 <ShieldCheck className="w-3 h-3 text-blue-500 fill-blue-50" />
                             )}
                         </span>
