@@ -19,7 +19,9 @@ export default auth((req) => {
 
     if (isProtected) {
         if (isLoggedIn) return
-        return Response.redirect(new URL('/login', nextUrl))
+        const loginUrl = new URL('/login', nextUrl)
+        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname)
+        return Response.redirect(loginUrl)
     }
 })
 

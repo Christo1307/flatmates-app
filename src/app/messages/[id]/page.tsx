@@ -19,7 +19,10 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
         select: { id: true, name: true, image: true }
     })
 
-    if (!otherUser) notFound()
+    if (!otherUser) {
+        console.error("Chat User Not Found:", otherUserId)
+        notFound()
+    }
 
     const messages = await getMessages(otherUserId)
 
