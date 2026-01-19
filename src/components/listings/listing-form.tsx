@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Listing } from "@prisma/client"
 
@@ -38,6 +38,7 @@ interface ListingFormProps {
 
 export function ListingForm({ listing }: ListingFormProps) {
     const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
     // Format images and amenities for form
@@ -63,18 +64,23 @@ export function ListingForm({ listing }: ListingFormProps) {
     })
 
     function onSubmit(values: z.infer<typeof ListingFormSchema>) {
+        setError(null)
         startTransition(async () => {
             if (listing) {
                 const res = await updateListing(listing.id, values)
                 if (res.success) {
                     router.push("/my-listings")
                     router.refresh()
+                } else if (res.error) {
+                    setError(res.error)
                 }
             } else {
                 const res = await createListing(values)
                 if (res.success) {
                     router.push("/listings")
                     router.refresh()
+                } else if (res.error) {
+                    setError(res.error)
                 }
             }
         })
@@ -206,6 +212,12 @@ export function ListingForm({ listing }: ListingFormProps) {
                                 </FormItem>
                             )}
                         />
+
+                        {error && (
+                            <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-md">
+                                {error}
+                            </div>
+                        )}
 
                         <Button type="submit" className="w-full" disabled={isPending}>
                             {listing ? (isPending ? "Updating..." : "Update Listing") : (isPending ? "Posting..." : "Create Listing")}

@@ -30,8 +30,17 @@ export default async function ListingPage({ params }: { params: { id: string } }
         notFound()
     }
 
-    const images = listing.images ? JSON.parse(listing.images) : []
-    const amenities = listing.amenities ? listing.amenities.split(',').map(s => s.trim()) : []
+    let images: string[] = []
+    try {
+        if (listing.images) {
+            const parsed = JSON.parse(listing.images)
+            images = Array.isArray(parsed) ? parsed : []
+        }
+    } catch (e) {
+        images = []
+    }
+
+    const amenities = listing.amenities ? listing.amenities.split(',').map(s => s.trim()).filter(Boolean) : []
 
     return (
         <div className="container mx-auto py-8 px-4">
@@ -127,7 +136,10 @@ export default async function ListingPage({ params }: { params: { id: string } }
                             {listing.availableFrom && (
                                 <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg text-sm">
                                     <Calendar className="w-4 h-4 text-primary" />
-                                    <span>Available from <strong>{new Date(listing.availableFrom).toLocaleDateString()}</strong></span>
+                                    <span>Available from <strong>{(() => {
+                                        const d = new Date(listing.availableFrom);
+                                        return isNaN(d.getTime()) ? "Immediate" : d.toLocaleDateString();
+                                    })()}</strong></span>
                                 </div>
                             )}
 

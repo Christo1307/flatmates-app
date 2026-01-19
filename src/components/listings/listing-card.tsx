@@ -18,7 +18,15 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-    const images = listing.images ? JSON.parse(listing.images) : []
+    let images: string[] = []
+    try {
+        if (listing.images) {
+            const parsed = JSON.parse(listing.images)
+            images = Array.isArray(parsed) ? parsed : []
+        }
+    } catch (e) {
+        images = []
+    }
     const firstImage = images.length > 0 ? images[0] : null
 
     return (
@@ -69,7 +77,10 @@ export function ListingCard({ listing }: ListingCardProps) {
                     {listing.availableFrom && (
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            <span>From {new Date(listing.availableFrom).toLocaleDateString()}</span>
+                            <span>From {(() => {
+                                const d = new Date(listing.availableFrom!);
+                                return isNaN(d.getTime()) ? "Immediate" : d.toLocaleDateString();
+                            })()}</span>
                         </div>
                     )}
                 </div>
