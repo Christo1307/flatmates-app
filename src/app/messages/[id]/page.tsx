@@ -6,11 +6,12 @@ import { redirect, notFound } from "next/navigation"
 
 export const dynamic = 'force-dynamic'
 
-export default async function ChatPage({ params }: { params: { id: string } }) {
+export default async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const session = await auth()
     if (!session?.user?.id) redirect("/login")
 
-    const otherUserId = params.id
+    const otherUserId = id
     if (otherUserId === session.user.id) redirect("/messages") // Cannot chat with self
 
     const otherUser = await db.user.findUnique({

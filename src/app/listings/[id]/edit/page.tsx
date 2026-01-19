@@ -3,14 +3,15 @@ import { getListing } from "@/actions/listing"
 import { ListingForm } from "@/components/listings/listing-form"
 import { redirect, notFound } from "next/navigation"
 
-export default async function EditListingPage({ params }: { params: { id: string } }) {
+export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const session = await auth()
 
     if (!session?.user) {
         redirect("/login")
     }
 
-    const listing = await getListing(params.id)
+    const listing = await getListing(id)
 
     if (!listing) {
         notFound()

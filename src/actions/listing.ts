@@ -68,7 +68,8 @@ export async function createListing(formData: z.input<typeof ListingSchema>) {
                 isFeatured: isPremium // Auto-feature listings from premium users
             }
         })
-    } catch {
+    } catch (e) {
+        console.error("Listing Create Error:", e)
         return { error: "Failed to create listing" }
     }
 
@@ -158,19 +159,24 @@ export async function updateListing(id: string, formData: z.input<typeof Listing
         imagesJson = JSON.stringify(urls)
     }
 
-    await db.listing.update({
-        where: { id },
-        data: {
-            title,
-            description,
-            rent,
-            deposit,
-            location,
-            amenities,
-            availableFrom,
-            images: imagesJson,
-        }
-    })
+    try {
+        await db.listing.update({
+            where: { id },
+            data: {
+                title,
+                description,
+                rent,
+                deposit,
+                location,
+                amenities,
+                availableFrom,
+                images: imagesJson,
+            }
+        })
+    } catch (e) {
+        console.error("Listing Update Error:", e)
+        return { error: "Failed to update listing" }
+    }
 
     revalidatePath("/listings")
     revalidatePath(`/listings/${id}`)

@@ -10,8 +10,9 @@ export const dynamic = 'force-dynamic'
 
 import { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-    const listing = await getListing(params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params
+    const listing = await getListing(id)
     if (!listing) {
         return {
             title: "Listing Not Found",
@@ -23,8 +24,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 }
 
-export default async function ListingPage({ params }: { params: { id: string } }) {
-    const listing = await getListing(params.id)
+export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
+    const listing = await getListing(id)
 
     if (!listing) {
         notFound()
