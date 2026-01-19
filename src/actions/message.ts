@@ -19,7 +19,10 @@ export async function sendMessage(formData: z.input<typeof MessageSchema>) {
 
     const { content, receiverId } = validated.data
 
-    if (receiverId === session.user.id) return { error: "Cannot message yourself" }
+    if (receiverId === session.user.id) {
+        return { error: "You cannot message yourself" }
+    }
+
 
     try {
         await db.message.create({
@@ -29,7 +32,8 @@ export async function sendMessage(formData: z.input<typeof MessageSchema>) {
                 receiverId
             }
         })
-    } catch {
+    } catch (e) {
+        console.error("SendMessage Error:", e)
         return { error: "Failed to send message" }
     }
 

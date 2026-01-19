@@ -183,8 +183,12 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                                         Your Listing
                                     </Button>
                                 ) : (
-                                    <Button asChild className="w-full" size="lg">
-                                        <Link href={`/messages/${listing.userId}`}>Contact User</Link>
+                                    <Button asChild className="w-full" size="lg" disabled={!listing.userId}>
+                                        {listing.userId ? (
+                                            <Link href={`/messages/${listing.userId}`}>Contact User</Link>
+                                        ) : (
+                                            "Contact Details Not Available"
+                                        )}
                                     </Button>
                                 )}
                                 <p className="text-xs text-center text-muted-foreground mt-2">

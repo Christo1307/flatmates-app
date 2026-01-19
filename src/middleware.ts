@@ -3,10 +3,23 @@ import { auth } from "@/auth"
 
 export default auth((req) => {
     const isLoggedIn = !!req.auth
-    const isOnDashboard = req.nextUrl.pathname.startsWith('/dashboard')
-    if (isOnDashboard) {
+    const { nextUrl } = req
+
+    // Define paths that require authentication
+    const protectedPaths = [
+        "/dashboard",
+        "/profile",
+        "/messages",
+        "/my-listings",
+        "/listings/create",
+        "/premium"
+    ]
+
+    const isProtected = protectedPaths.some(path => nextUrl.pathname.startsWith(path))
+
+    if (isProtected) {
         if (isLoggedIn) return
-        return Response.redirect(new URL('/login', req.nextUrl))
+        return Response.redirect(new URL('/login', nextUrl))
     }
 })
 

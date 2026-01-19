@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSearchParams } from "next/navigation"
 import { useState, useTransition } from "react"
 import Link from "next/link"
 
@@ -24,6 +25,8 @@ const LoginSchema = z.object({
 })
 
 export function LoginForm() {
+    const searchParams = useSearchParams()
+    const callbackUrl = searchParams.get("callbackUrl")
     const [error, setError] = useState<string | undefined>("")
     const [isPending, startTransition] = useTransition()
 
@@ -47,6 +50,9 @@ export function LoginForm() {
             const formData = new FormData()
             formData.append("email", values.email)
             formData.append("password", values.password)
+            if (callbackUrl) {
+                formData.append("redirectTo", callbackUrl)
+            }
 
             try {
                 const result = await login(formData)
