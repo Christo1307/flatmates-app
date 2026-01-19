@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Calendar, Check, ArrowLeft, ShieldCheck, Star } from "lucide-react"
+import { auth } from "@/auth"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -31,6 +32,9 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     if (!listing) {
         notFound()
     }
+
+    const session = await auth()
+    const isOwner = session?.user?.id === listing.userId
 
     let images: string[] = []
     try {
@@ -174,9 +178,15 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                                         )}
                                     </div>
                                 </div>
-                                <Button asChild className="w-full" size="lg">
-                                    <Link href={`/messages/${listing.userId}`}>Contact User</Link>
-                                </Button>
+                                {isOwner ? (
+                                    <Button variant="outline" className="w-full" size="lg" disabled>
+                                        Your Listing
+                                    </Button>
+                                ) : (
+                                    <Button asChild className="w-full" size="lg">
+                                        <Link href={`/messages/${listing.userId}`}>Contact User</Link>
+                                    </Button>
+                                )}
                                 <p className="text-xs text-center text-muted-foreground mt-2">
                                     Secure your room on Roommates India
                                 </p>

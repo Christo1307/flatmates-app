@@ -59,10 +59,12 @@ export function ChatInterface({ initialMessages, currentUserId, otherUser }: Cha
 
         const res = await sendMessage({ content, receiverId: otherUser.id })
         setIsSending(false)
+        console.log("Send feedback:", res)
 
         if (res.error) {
-            // Rollback or show error (for MVP just console.error)
-            console.error(res.error)
+            // Rollback optimistic update
+            setMessages(prev => prev.filter(m => m.id !== tempId))
+            alert(res.error)
         } else {
             router.refresh()
         }
