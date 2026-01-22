@@ -33,6 +33,8 @@ const ProfileSchema = z.object({
     budgetMax: z.coerce.number().optional(),
     lifestyle: z.string().optional(),
     moveInDate: z.string().optional(),
+    isPublic: z.boolean().optional(),
+    preferredLocation: z.string().optional(),
     hideGender: z.boolean().optional(),
 })
 
@@ -63,6 +65,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
             budgetMax: user.budgetMax || undefined,
             lifestyle: user.lifestyle || "",
             moveInDate: user.moveInDate ? new Date(user.moveInDate).toISOString().split('T')[0] : "",
+            isPublic: user.isPublic || false,
+            preferredLocation: user.preferredLocation || "",
             hideGender: (settings.hideGender as boolean) || false,
         },
     })
@@ -208,6 +212,46 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-lg font-medium">Roommate Search Settings</h3>
+                            <FormField
+                                control={form.control}
+                                name="isPublic"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                        <div className="space-y-0.5">
+                                            <FormLabel className="text-base">List Profile Publicly</FormLabel>
+                                            <FormDescription>
+                                                Make your profile visible to others looking for roommates.
+                                            </FormDescription>
+                                        </div>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="preferredLocation"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Preferred Search Location</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g. Bangalore, Indiranagar" {...field} disabled={isPending} />
+                                        </FormControl>
+                                        <FormDescription>Where are you looking for a flat sharing?</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <div className="flex flex-col gap-4">
                             <h3 className="text-lg font-medium">Privacy Settings</h3>

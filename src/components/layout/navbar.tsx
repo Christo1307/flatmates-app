@@ -24,6 +24,15 @@ export function Navbar() {
                     Roommates India
                 </Link>
 
+                <div className="hidden md:flex items-center gap-6 ml-8 mr-auto">
+                    <Link href="/listings" className="text-sm font-medium hover:text-primary transition-colors">
+                        Find Properties
+                    </Link>
+                    <Link href="/roommates" className="text-sm font-medium hover:text-primary transition-colors">
+                        Find Roommates
+                    </Link>
+                </div>
+
                 <div className="flex items-center gap-4">
                     {session ? (
                         <>

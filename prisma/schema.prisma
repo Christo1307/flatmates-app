@@ -26,6 +26,8 @@ model User {
   budgetMax     Int?
   lifestyle     String? // Comma separated tags or JSON
   moveInDate    DateTime?
+  isPublic      Boolean   @default(false)
+  preferredLocation String?
   settings      String?   // JSON for privacy and other settings
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
