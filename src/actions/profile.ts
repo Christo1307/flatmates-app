@@ -18,6 +18,7 @@ const ProfileSchema = z.object({
     isPublic: z.boolean().optional(),
     preferredLocation: z.string().optional(),
     images: z.string().optional(),
+    image: z.string().optional(),
     hideGender: z.boolean().optional(),
 })
 
@@ -41,6 +42,7 @@ export async function updateProfile(formData: z.input<typeof ProfileSchema>) {
         // Filter out undefined
         const updateData: Prisma.UserUpdateInput = {}
         if (data.name !== undefined) updateData.name = data.name
+        if (data.image !== undefined) updateData.image = data.image
         if (data.bio !== undefined) updateData.bio = data.bio
         if (data.age !== undefined) updateData.age = data.age
         if (data.occupation !== undefined) updateData.occupation = data.occupation

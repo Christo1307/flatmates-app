@@ -59,6 +59,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         resolver: zodResolver(ProfileSchema),
         defaultValues: {
             name: user.name || "",
+            image: user.image || "",
             bio: user.bio || "",
             age: user.age || undefined,
             occupation: user.occupation || "",
@@ -113,6 +114,20 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                     <FormControl>
                                         <Input {...field} disabled={isPending} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Profile Picture (URL)</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="https://example.com/avatar.jpg" {...field} disabled={isPending} />
+                                    </FormControl>
+                                    <FormDescription>Link to your main profile picture.</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}

@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Briefcase, MapPin, User as UserIcon, Calendar, Wallet } from "lucide-react"
 import Link from "next/link"
 import { User } from "@prisma/client"
+import Image from "next/image"
 
 interface RoommateCardProps {
     roommate: User
@@ -17,38 +18,46 @@ export function RoommateCard({ roommate }: RoommateCardProps) {
 
     let profileImages: string[] = []
     try {
-        profileImages = roommate.images ? JSON.parse(roommate.images) : []
+        if (roommate.images) {
+            const parsed = JSON.parse(roommate.images)
+            profileImages = Array.isArray(parsed) ? parsed : []
+        }
     } catch { }
 
     return (
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow group">
+        <Card className="overflow-hidden hover:shadow-lg transition-shadow group flex flex-col h-full">
             {profileImages.length > 0 ? (
-                <div className="relative h-48 w-full overflow-hidden">
-                    <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
+                <div className="relative h-56 w-full overflow-hidden bg-muted">
+                    <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
                         {profileImages.map((img, i) => (
-                            <img
-                                key={i}
-                                src={img}
-                                alt={`${roommate.name}'s profile ${i + 1}`}
-                                className="h-full w-full object-cover flex-shrink-0 snap-center"
-                            />
+                            <div key={i} className="relative h-full w-[100%] flex-shrink-0 snap-center">
+                                <Image
+                                    src={img}
+                                    alt={`${roommate.name}'s profile ${i + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                    priority={i === 0}
+                                />
+                            </div>
                         ))}
                     </div>
                     {profileImages.length > 1 && (
-                        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full backdrop-blur-sm">
-                            1 / {profileImages.length}
+                        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm z-10 flex items-center gap-1 font-medium">
+                            {profileImages.length} Photos
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="h-48 w-full bg-muted flex items-center justify-center">
-                    <UserIcon className="w-12 h-12 text-muted-foreground/30" />
+                <div className="h-56 w-full bg-muted flex flex-col items-center justify-center gap-2 border-b">
+                    <UserIcon className="w-10 h-10 text-muted-foreground/20" />
+                    <span className="text-xs text-muted-foreground/40 font-medium">No gallery images</span>
                 </div>
             )}
-            <CardHeader className="flex flex-row items-center gap-4 pb-2 pt-4">
-                <Avatar className="h-10 w-10 text-blue-600 bg-blue-100 border-2 border-background -mt-12 shadow-sm">
-                    <AvatarImage src={roommate.image || ""} alt={roommate.name || "User"} />
-                    <AvatarFallback>{roommate.name?.charAt(0) || "U"}</AvatarFallback>
+            <CardHeader className="flex flex-row items-center gap-4 pb-2 pt-4 relative">
+                <Avatar className="h-14 w-14 border-4 border-background -mt-10 shadow-md">
+                    <AvatarImage src={roommate.image || ""} alt={roommate.name || "User"} className="object-cover" />
+                    <AvatarFallback className="bg-blue-100 text-blue-600 font-bold">{roommate.name?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                     <h3 className="font-semibold text-lg">{roommate.name}</h3>
