@@ -28,6 +28,7 @@ model User {
   moveInDate    DateTime?
   isPublic      Boolean   @default(false)
   preferredLocation String?
+  images        String?   // JSON string of image URLs
   settings      String?   // JSON for privacy and other settings
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

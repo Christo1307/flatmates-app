@@ -15,10 +15,38 @@ interface RoommateCardProps {
 export function RoommateCard({ roommate }: RoommateCardProps) {
     const lifestyleTags = roommate.lifestyle ? roommate.lifestyle.split(',').map(tag => tag.trim()) : []
 
+    let profileImages: string[] = []
+    try {
+        profileImages = roommate.images ? JSON.parse(roommate.images) : []
+    } catch { }
+
     return (
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <Avatar className="h-12 w-12 text-blue-600 bg-blue-100">
+        <Card className="overflow-hidden hover:shadow-lg transition-shadow group">
+            {profileImages.length > 0 ? (
+                <div className="relative h-48 w-full overflow-hidden">
+                    <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
+                        {profileImages.map((img, i) => (
+                            <img
+                                key={i}
+                                src={img}
+                                alt={`${roommate.name}'s profile ${i + 1}`}
+                                className="h-full w-full object-cover flex-shrink-0 snap-center"
+                            />
+                        ))}
+                    </div>
+                    {profileImages.length > 1 && (
+                        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full backdrop-blur-sm">
+                            1 / {profileImages.length}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="h-48 w-full bg-muted flex items-center justify-center">
+                    <UserIcon className="w-12 h-12 text-muted-foreground/30" />
+                </div>
+            )}
+            <CardHeader className="flex flex-row items-center gap-4 pb-2 pt-4">
+                <Avatar className="h-10 w-10 text-blue-600 bg-blue-100 border-2 border-background -mt-12 shadow-sm">
                     <AvatarImage src={roommate.image || ""} alt={roommate.name || "User"} />
                     <AvatarFallback>{roommate.name?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>

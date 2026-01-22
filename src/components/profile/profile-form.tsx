@@ -35,6 +35,7 @@ const ProfileSchema = z.object({
     moveInDate: z.string().optional(),
     isPublic: z.boolean().optional(),
     preferredLocation: z.string().optional(),
+    images: z.string().optional(),
     hideGender: z.boolean().optional(),
 })
 
@@ -67,6 +68,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
             moveInDate: user.moveInDate ? new Date(user.moveInDate).toISOString().split('T')[0] : "",
             isPublic: user.isPublic || false,
             preferredLocation: user.preferredLocation || "",
+            images: (() => {
+                try {
+                    return user.images ? JSON.parse(user.images).join(', ') : ""
+                } catch { return "" }
+            })(),
             hideGender: (settings.hideGender as boolean) || false,
         },
     })
@@ -247,6 +253,25 @@ export function ProfileForm({ user }: ProfileFormProps) {
                                             <Input placeholder="e.g. Bangalore, Indiranagar" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormDescription>Where are you looking for a flat sharing?</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="images"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Profile Gallery Images (URLs)</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                                                {...field}
+                                                disabled={isPending}
+                                            />
+                                        </FormControl>
+                                        <FormDescription>Comma separated list of image URLs for your roommate profile gallery.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}

@@ -17,6 +17,7 @@ const ProfileSchema = z.object({
     moveInDate: z.string().optional().transform(str => str ? new Date(str) : undefined),
     isPublic: z.boolean().optional(),
     preferredLocation: z.string().optional(),
+    images: z.string().optional(),
     hideGender: z.boolean().optional(),
 })
 
@@ -49,6 +50,11 @@ export async function updateProfile(formData: z.input<typeof ProfileSchema>) {
         if (data.moveInDate !== undefined) updateData.moveInDate = data.moveInDate
         if (data.isPublic !== undefined) updateData.isPublic = data.isPublic
         if (data.preferredLocation !== undefined) updateData.preferredLocation = data.preferredLocation
+
+        if (data.images !== undefined) {
+            const urls = data.images.split(',').map(s => s.trim()).filter(Boolean)
+            updateData.images = JSON.stringify(urls)
+        }
 
         // Handle settings
         // Handle settings
