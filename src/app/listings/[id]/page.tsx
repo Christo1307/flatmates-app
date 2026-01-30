@@ -1,4 +1,11 @@
 import { getListing } from "@/actions/listing"
+import nextDynamic from 'next/dynamic'
+
+const LocationMap = nextDynamic(() => import('@/components/listings/location-map').then(mod => mod.LocationMap), {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-muted animate-pulse rounded-lg" />
+})
+
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -112,6 +119,15 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                         <h3 className="text-xl font-semibold mb-2">About this place</h3>
                         <p className="whitespace-pre-line text-muted-foreground">{listing.description}</p>
                     </div>
+
+                    <div className="space-y-2">
+                        <h3 className="text-xl font-semibold">Location</h3>
+                        <p className="text-muted-foreground mb-2 flex items-center gap-2">
+                            <MapPin className="w-4 h-4" /> {listing.location}
+                        </p>
+                        <LocationMap location={listing.location} />
+                    </div>
+
 
                     {amenities.length > 0 && (
                         <div>
